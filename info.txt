@@ -1,0 +1,7 @@
+-   To build your own image, you create a Dockerfile with a simple syntax for defining the steps needed to create the image and run it. 
+
+-   An image is a read-only template with instructions for creating a Docker container. 
+
+-   A container is a runnable instance of an image.
+
+-   docker run -it
