@@ -1,45 +1,66 @@
 version: '3'
 
 services:
-  hmida_ubuntu:
-    image: celtak/ubuntu-ping-ip
-    container_name: 1_ub
-    stdin_open: true
-    tty: true
+  mariadb:
+    container_name: mariadb
     networks:
-      - taj_ma7al
-  aziz_ubuntu:
-    image: celtak/ubuntu-ping-ip
-    container_name: 2_ub
-    stdin_open: true
-    tty: true
+      - inception
+    build:
+      context: requirements/mariadb
+      dockerfile: Dockerfile
+    env_file: .env
+    volumes:
+      - mariadb:/var/lib/mysql
+    restart: unless-stopped
+    expose:
+      - "3306"
+
+  nginx:
+    container_name: nginx
+    volumes:
+      - wordpress:/var/www/wordpress
     networks:
-      - taj_ma7al
-  jilali_ubuntu:
-    image: celtak/ubuntu-ping-ip
-    container_name: 3_ub
-    stdin_open: true
-    tty: true
+      - inception
+    depends_on:
+      - wordpress
+    build:
+      context: requirements/nginx
+      dockerfile: Dockerfile
+    env_file: .env
+    ports:
+      - "443:443"
+    restart: on-failure
+
+  wordpress:
+    container_name: wordpress
+    env_file: .env
+    volumes:
+      - wordpress:/var/www/wordpress
     networks:
-      - 9hiwa_dyal_9mara
-  3abmola_ubuntu:
-    image: celtak/ubuntu-ping-ip
-    container_name: 4_ub
-    stdin_open: true
-    tty: true
-    networks:
-      - 9hiwa_dyal_9mara
-  aissa_ubuntu:
-    image: celtak/ubuntu-ping-ip
-    container_name: 5_ub
-    stdin_open: true
-    tty: true
-    networks:
-      - jama3_lmoominin
+      - inception
+    build:
+      context: requirements/wordpress
+      dockerfile: Dockerfile
+    depends_on:
+      - mariadb
+    restart: on-failure
+    expose:
+      - "9000"
+
+volumes:
+  wordpress:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/Users/akouame/data/wordpress'
+  mariadb:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/Users/akouame/data/mariadb'
+
 networks:
-  taj_ma7al:
-    driver: bridge
-  9hiwa_dyal_9mara:
-    driver: bridge
-  jama3_lmoominin:
+  inception:
     driver: bridge
