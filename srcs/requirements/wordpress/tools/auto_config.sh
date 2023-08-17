@@ -1,28 +1,27 @@
-#!/bin/bash
+#!/bin/sh
 
-sleep 5
+sleep 10
 
-if [ ! -f "/var/www/wordpress/wp-config.php" ]; then
-    wp config create --allow-root \
-        --dbname=db \
-        --dbuser=Aissa \
-        --dbpass=123+ \
-        --dbhost=mariadb:3306 \
-        --path='/var/www/wordpress'
-fi
+wp core download --allow-root --path='/var/www/wordpress' 
+cp /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php
+
+sed -i "s|database_name_here|$SQL_DATABASE|"  /var/www/wordpress/wp-config.php
+sed -i "s|username_here|$SQL_USER|"  /var/www/wordpress/wp-config.php
+sed -i "s|password_here|$SQL_PASSWORD|"  /var/www/wordpress/wp-config.php
+sed -i "s|localhost|mariadb:3306|"  /var/www/wordpress/wp-config.php
 
 wp core install --allow-root \
     --url=http://localhost \
     --title="Inception WordPress Site" \
-    --admin_user=admin \
-    --admin_password=123+ \
-    --admin_email=aissakouame3@gmail.com \
+    --admin_user=$WP_ADMIN \
+    --admin_password=$WP_PASSWORD \
+    --admin_email=$WP_EMAIL \
     --path='/var/www/wordpress'
 
 wp user create --allow-root \
-    user2 \
-    aissakouame4@gmail.com \
-    --user_pass=0000 \
+    $WP_USER \
+    $WP_EMAIL_USER \
+    --user_pass=$WP_PASSWOR_USER \
     --role=author \
     --path='/var/www/wordpress'
 
@@ -33,6 +32,3 @@ fi
 sed -i 's|listen = /run/php/php7.3-fpm.sock|listen = 9000|' /etc/php/7.3/fpm/pool.d/www.conf
 
 exec /usr/sbin/php-fpm7.3 -F
-
-# sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = 9000/' /etc/php/7.3/fpm/pool.d/www.conf
-# sed -i 's|listen = /run/php/php7.3-fpm.sock|listen = 9000|' /etc/php/7.3/fpm/pool.d/www.conf
