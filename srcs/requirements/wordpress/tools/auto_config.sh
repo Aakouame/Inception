@@ -21,12 +21,12 @@ wp core install --allow-root \
 wp user create --allow-root \
     $WP_USER \
     $WP_EMAIL_USER \
-    --user_pass=$WP_PASSWOR_USER \
+    --user_pass=$WP_PASSWORD_USER \
     --role=author \
     --path='/var/www/wordpress'
 
 if [ ! -d "/run/php" ]; then
-    mkdir /run/php
+    mkdir -p /run/php
 fi
 
 sed -i 's|listen = /run/php/php7.3-fpm.sock|listen = 9000|' /etc/php/7.3/fpm/pool.d/www.conf
