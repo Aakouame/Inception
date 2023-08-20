@@ -1,5 +1,7 @@
 all:
 	docker-compose -f ./srcs/docker-compose.yml up --build
+	echo "123+" | sudo -S clear
+	echo "172.0.0.1 akouame.fr" | sudo tee -a /etc/hosts
 
 clean:
 	docker-compose -f ./srcs/docker-compose.yml down
